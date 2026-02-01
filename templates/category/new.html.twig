@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Category{% endblock %}
+
+{% block body %}
+    <div class="bg-secondary mb-2 px-2">
+        <a class="text-white" href="{{ path('app_category_index') }}">Categories</a>
+        <span class="text-white">&gt; New</span>
+    </div>
+    <div class="row text-center mx-5">
+        <div class="col-md-4 mx-auto">
+            <div class="card border-dark">
+                <div class="card-head">
+                    <h1 class="card-title">Create new Category</h1>
+                </div>
+                <div class="card-body">
+                    {% set show_delete = false %}
+                    {{ include('category/_form.html.twig') }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

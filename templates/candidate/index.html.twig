@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Candidate index{% endblock %}
+
+{% block body %}
+    <div class="bg-secondary mb-2 px-2">
+        <div class="text-end">
+            <a class="btn btn-success btn-sm" href="{{ path('app_candidate_new') }}">Create new</a>
+        </div>
+    </div>
+    <h1>Candidate index</h1>
+
+    <table class="table table-condensed table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Bio</th>
+                <th>Birthdate</th>
+                <th>Height</th>
+                <th>Weight</th>
+                <th>HomeTown</th>
+                <th>Married</th>
+                <th>Income</th>
+                <th>PoliticalAffiliation</th>
+                <th>Interests</th>
+                <th>Lifestyle</th>
+                <th>AdditionalInformation</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for candidate in candidates %}
+            <tr>
+                <td>{{ candidate.id }}</td>
+                <td>{{ candidate.Name }}</td>
+                <td>{{ candidate.Bio }}</td>
+                <td>{{ candidate.Birthdate ? candidate.Birthdate|date('Y-m-d') : '' }}</td>
+                <td>{{ candidate.Height }}</td>
+                <td>{{ candidate.Weight }}</td>
+                <td>{{ candidate.HomeTown }}</td>
+                <td>{{ candidate.Married ? 'Yes' : 'No' }}</td>
+                <td>{{ candidate.Income }}</td>
+                <td>{{ candidate.PoliticalAffiliation }}</td>
+                <td>{{ candidate.Interests }}</td>
+                <td>{{ candidate.Lifestyle }}</td>
+                <td>{{ candidate.AdditionalInformation }}</td>
+                <td>
+                    <a class="btn btn-sm btn-primary" href="{{ path('app_candidate_show', {'id': candidate.id}) }}">show</a>
+                    <a class="btn btn-sm btn-info"href="{{ path('app_candidate_edit', {'id': candidate.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="14">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

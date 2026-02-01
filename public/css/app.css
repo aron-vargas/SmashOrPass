@@ -1,0 +1,13 @@
+body {
+    background-color: skyblue;
+}
+
+.navbar .navbar-nav .nav-item.active .nav-link {
+    color: rgba(255, 255, 255, 1);
+    background-color: rgb(82, 121, 248);
+}
+
+.table.table-striped {
+  --bs-table-striped-bg: rgba(210, 210, 210, 0.6);
+
+}

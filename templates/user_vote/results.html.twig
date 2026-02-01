@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Voting Results{% endblock %}
+
+{% block body %}
+    <nav class="navbar navbar-expand-lg px-2 navbar-light">
+        {{ knp_menu_render('vote', {'currentClass': 'active'}) }}
+    </nav>
+    
+    <h1>All Voting Results</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Candidate</th>
+                <th>Smash or Pass</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for user_vote in user_votes %}
+            <tr>
+                <td class='candidate-hs'>
+                    <img src="{{ user_vote.Candidate.ImgUrl }}" class="img-thumbnail" />
+                    <div>{{ user_vote.Candidate.Name }}<div>
+                </td>
+                <td>
+                    {% if user_vote.User.NickName is empty %}
+                        {{ user_vote.User.FirstName ~ ' ' ~ user_vote.User.LastName }}
+                    {% else %}
+                        {{ user_vote.User.NickName }}
+                    {% endif %}
+                </td>
+                <td class="{{user_vote.Smash ? 'table-sucess' : 'table-warning'}}">{{ user_vote.Smash ? '<b>Smash<b>' : '<i>Pass</i>' }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">No votes have been recorded</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

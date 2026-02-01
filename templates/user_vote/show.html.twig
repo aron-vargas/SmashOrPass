@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}UserVote{% endblock %}
+
+{% block body %}
+    <h1>UserVote</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ user_vote.id }}</td>
+            </tr>
+            <tr>
+                <th>CreatedOn</th>
+                <td>{{ user_vote.CreatedOn ? user_vote.CreatedOn|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>ModifiedOn</th>
+                <td>{{ user_vote.ModifiedOn ? user_vote.ModifiedOn|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Smash</th>
+                <td>{{ user_vote.Smash ? 'Yes' : 'No' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_user_vote_index') }}">back to list</a>
+
+    <a href="{{ path('app_user_vote_edit', {'id': user_vote.id}) }}">edit</a>
+
+    {{ include('user_vote/_delete_form.html.twig') }}
+{% endblock %}

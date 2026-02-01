@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Voting Results{% endblock %}
+
+{% block body %}
+    <nav class="navbar navbar-expand-lg px-2 navbar-light">
+        {{ knp_menu_render('vote', {'currentClass': 'active'}) }}
+    </nav>
+
+    <h1>Voting Results</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th width="20%">Candidate</th>
+                <th width="80%">Smash or Pass</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% set TotalSmashCount = 0 %}
+        {% set TotalPassCount = 0 %}
+        {% for candidate in candidates %}
+            <tr>
+                <td class='candidate-hs'>
+                    <img src="{{ candidate.ImgUrl }}" class="img-thumbnail" />
+                    <div>{{ candidate.Name }}</div>
+                </td>
+                <td>
+                    {% set SmashCount = 0 %}
+                    {% set PassCount = 0 %}
+                    {% if candidate.uservotes %}
+                        {% for user_vote in candidate.uservotes %}
+                            {% if user_vote.Smash %}
+                                {% set SmashCount = SmashCount + 1 %}
+                            {% else %}
+                                {% set PassCount = PassCount + 1 %}
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                    {% set total = SmashCount + PassCount %}
+                    {% set SmashPercent = total > 0 ? (SmashCount / total) * 100 : 0 %}
+                    {% set PassPercent = total > 0 ? (PassCount / total) * 100 : 0 %}
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: {{ SmashPercent|round(0, 'floor') }}%" aria-valuenow="{{ SmashPercent|round(0, 'floor') }}" aria-valuemin="0" aria-valuemax="100"></div>{{ SmashCount }}
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-striped bg-danger" role="progressbar" style="width: {{ PassPercent|round(0, 'floor') }}%" aria-valuenow="{{ PassPercent|round(0, 'floor') }}" aria-valuemin="0" aria-valuemax="100"></div>{{ PassCount }}
+                    </div>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">No votes have been recorded</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

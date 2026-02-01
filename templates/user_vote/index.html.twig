@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Vote Listing{% endblock %}
+
+{% block body %}
+    <nav class="navbar navbar-expand-lg px-2 navbar-light">
+        {{ knp_menu_render('vote', {'currentClass': 'active'}) }}
+    </nav>
+    
+    <h1>Vote Listing</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>User</th>
+                <th>Candidate</th>
+                <th>Smash</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for user_vote in user_votes %}
+            <tr>
+                <td>{{ user_vote.id }}</td>
+                <td>{{ user_vote.User.FirstName ~ ' ' ~user_vote.User.Lastname}}</td>
+                <td>{{ user_vote.Candidate.Name }}</td>
+                <td class="{{user_vote.Smash ? 'table-sucess' : 'table-warning'}}">
+                    {{ user_vote.Smash ? 'Yes' : 'No' }}
+                </td>
+                <td>
+                    <a class='btn btn-sm btn-secondary' title='View' href="{{ path('app_user_vote_show', {'id': user_vote.id}) }}">{{ ux_icon('lsicon:view-outline') }}</a>
+                    <a class='btn btn-sm btn-primary' title='Edit' href="{{ path('app_user_vote_edit', {'id': user_vote.id}) }}">{{ ux_icon('ic:baseline-edit') }}</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+  {#  <a href="{{ path('app_user_vote_new') }}">Create new</a> #}
+{% endblock %}

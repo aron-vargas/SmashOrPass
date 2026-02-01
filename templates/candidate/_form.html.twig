@@ -1,0 +1,45 @@
+{% form_theme form 'forms/sop_formrow_layout.html.twig' %}
+
+{{ form_start(form) }}
+    <div class="card bg-primary mb-4 p-3" data-controller="candidate-research" data-search-url="{{ path('app_candidate_search') }}">
+        <div class="input-group mb-4">
+            <input
+                type="text"
+                class="form-control"
+                placeholder="Enter candidate name to search..."
+                data-candidate-research-target="searchInput"
+                data-action="keydown->candidate-research#searchOnEnter"
+            >
+            <button
+                class="btn btn-secondary"
+                type="button"
+                data-candidate-research-target="searchButton"
+                data-action="click->candidate-research#search"
+            >
+                Search & Auto-fill
+            </button>
+        </div>
+        <div class="alert alert-info d-none" role="alert" data-candidate-research-target="loadingMessage">
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            Searching for candidate information...
+        </div>
+    </div>
+
+    {{ form_widget(form) }}
+
+    <button class="btn btn-primary">{{ button_label|default('Save') }}</button>
+    {% if show_delete %}
+        <button class="btn btn-secondary" type="button" onclick="SubmitDelete()">Delete</button>
+    {% endif %}
+{{ form_end(form) }}
+
+{% if show_delete %}
+    {{ include('candidate/_delete_form.html.twig') }}
+{% endif %}
+
+<script>
+function SubmitDelete()
+{
+    document.getElementById("delete-candidate").requestSubmit();
+}
+</script>

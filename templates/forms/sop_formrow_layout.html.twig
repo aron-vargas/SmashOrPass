@@ -1,0 +1,8 @@
+{# templates/form/custom_layout.html.twig #}
+{% block form_row %}
+    <div class="form-floating mb-4">
+        {{ form_widget(form) }}
+        {{ form_label(form) }}
+        {{ form_errors(form) }}
+    </div>
+{% endblock form_row %}

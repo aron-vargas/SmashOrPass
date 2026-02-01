@@ -7,6 +7,9 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+    knp_menu.renderer.twig.options:
+        currentClass: active
+    openai_api_key: '%env(OPENAI_API_KEY)%'
 
 services:
     # default configuration for services in *this* file
@@ -20,4 +23,34 @@ services:
         resource: '../src/'
 
     # add more service definitions when explicit configuration is needed
+    app.menu_builder:
+        class: App\Menu\MenuBuilder
+        arguments: ["@knp_menu.factory", "@security.helper"]
+
+    app.main_menu:
+        class: Knp\Menu\MenuItem # the service definition requires setting the class
+        factory: ["@app.menu_builder", createMainMenu]
+        arguments: ["@request_stack"]
+        tags:
+            - { name: knp_menu.menu, alias: main } # The alias is what is used to retrieve the menu
+
+    app.voting_menu_builder:
+        class: App\Menu\VotingMenu
+        arguments: ["@knp_menu.factory"]
+
+    app.vote_menu:
+        class: Knp\Menu\MenuItem
+        factory: ["@app.voting_menu_builder", createMainMenu]
+        arguments: ["@request_stack"]
+        tags:
+            - { name: knp_menu.menu, alias: vote }
+
+    App\Service\CandidateResearchService:
+        arguments:
+            $openaiApiKey: '%openai_api_key%'
+
+    App\Service\ImageSearchService:
+        arguments:
+            $openaiApiKey: '%openai_api_key%'
+
     # please note that last definitions always *replace* previous ones

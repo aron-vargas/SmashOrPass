@@ -1,0 +1,89 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Candidate{% endblock %}
+
+{% block body %}
+    <div class="bg-secondary mb-2 px-2">
+        <a class="text-white" href="{{ path('app_candidate_index') }}">Candidates</a>
+        <span class="mx-1">&gt;</span>
+        <a class="text-white"href="{{ path('app_candidate_edit', {'id': candidate.id}) }}">Edit</a>
+        <span class="mx-1">&gt;</span>
+        <span class="text-white">Detail</span>
+    </div>
+
+    <h1>Candidate</h1>
+
+    <div class="row mx-1">
+        <div class="col-md-4 text-center">
+            {% if candidate.id %}
+                <form method="post" action="{{ path('app_candidate_img_search', {'id': candidate.id}) }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('img-search' ~ candidate.id) }}">
+                    <button class="btn btn-sm btn-primary" type="submit">Find new Picture</button>
+                </form>
+            {% endif %}
+
+            {% if candidate.imgurl %}
+                <img src="{{ candidate.imgurl }}" alt="Candidate image" class="img-fluid img-thumbnail mt-2 mx-auto" style="max-height:320px;">
+            {% endif %}
+        </div>
+        <div class="col-md-8">
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <th class="text-end bg-secondary">Id</th>
+                        <td>{{ candidate.id }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-end bg-secondary">Name</th>
+                        <td>{{ candidate.Name }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-end bg-secondary">Bio</th>
+                        <td>{{ candidate.Bio }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-end bg-secondary">Birthdate</th>
+                        <td>{{ candidate.Birthdate ? candidate.Birthdate|date('Y-m-d') : '' }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-end bg-secondary">Height</th>
+                        <td>{{ candidate.Height }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-end bg-secondary">Weight</th>
+                        <td>{{ candidate.Weight }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-end bg-secondary">Home Town</th>
+                        <td>{{ candidate.HomeTown }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-end bg-secondary">Married</th>
+                        <td>{{ candidate.Married ? 'Yes' : 'No' }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-end bg-secondary">Income</th>
+                        <td>{{ candidate.Income }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-end bg-secondary">Political Affiliation</th>
+                        <td>{{ candidate.PoliticalAffiliation }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-end bg-secondary">Interests</th>
+                        <td>{{ candidate.Interests }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-end bg-secondary">Lifestyle</th>
+                        <td>{{ candidate.Lifestyle }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-end bg-secondary">Additional Information</th>
+                        <td>{{ candidate.AdditionalInformation }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+{% endblock %}
