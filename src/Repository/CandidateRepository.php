@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Candidate;
+use App\Entity\User;
+use App\Entity\UserVote;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -16,13 +18,15 @@ class CandidateRepository extends ServiceEntityRepository {
     }
 
     /**
-     * Find a random Candidate optionally constrained by category name and gender.
-     * If a seed is provided, selection will be deterministic for that seed.
+     * Find the next Candidate in ascending order of id optionally constrained by category and gender.
+     * If a seed is provided, it determines a deterministic starting point; the next record after that start is returned.
+     * When a User is supplied, the method will prefer candidates the user has NOT voted on; if none are available it will return the next candidate regardless.
      */
-    public function findRandomByCategoryAndGender(?string $categoryName, ?string $gender, ?int $seed = null): ?Candidate
+    public function findByCategoryAndGender(?string $categoryName, ?string $gender, ?User $user = null, ?int &$currentIndex = null): ?Candidate
     {
         $qb = $this->createQueryBuilder('c')
-            ->select('c.id');
+            ->select('c.id')
+            ->orderBy('c.id', 'ASC');
 
         if ($categoryName)
         {
@@ -44,11 +48,42 @@ class CandidateRepository extends ServiceEntityRepository {
             return null;
         }
 
-        // Normalize ids (results may be [['id' => '123'], ...] or [['0' => '123'], ...])
+        // Normalize ids
         $ids = array_map(fn($r) => (int) (isset($r['id']) ? $r['id'] : array_values($r)[0]), $results);
-        $index = random_int(0, count($ids) - 1);
+        $count = count($ids);
 
-        return $this->find($ids[$index]);
+        // index from currentIndex (if provided)
+        if ($currentIndex === null)
+            $currentIndex = 0;
+        else if ($currentIndex >= $count)
+            $currentIndex = 0;
+
+        return $this->find($ids[$currentIndex]);
+    }
+
+    /**
+     * Find the Candidates in ascending order of id optionally constrained by category and gender.
+     */
+    public function findAllByCategoryAndGender(?string $categoryName, ?string $gender): ?array
+    {
+        $qb = $this->createQueryBuilder('c')
+            ->leftJoin('c.Categories', 'cat')
+            ->addSelect('cat')
+            ->orderBy('c.id', 'ASC');
+
+        if ($categoryName)
+        {
+            $qb->andWhere('cat.Name = :category')
+                ->setParameter('category', $categoryName);
+        }
+
+        if ($gender)
+        {
+            $qb->andWhere('c.Gender = :gender')
+                ->setParameter('gender', $gender);
+        }
+
+        return $qb->getQuery()->getResult();
     }
 
     //    /**

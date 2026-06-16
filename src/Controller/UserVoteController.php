@@ -8,6 +8,7 @@ use App\Form\UserVoteType;
 use App\Config\GenderType;
 use App\Repository\UserVoteRepository;
 use App\Repository\CandidateRepository;
+use App\Repository\UserRepository;
 use App\Repository\CategoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,12 +19,24 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/votes')]
 final class UserVoteController extends AbstractController {
     #[Route(name: 'app_user_vote_index', methods: ['GET'])]
-    public function index(UserVoteRepository $userVoteRepository): Response
+    public function index(UserVoteRepository $userVoteRepository, CandidateRepository $candidateRepository, UserRepository $userRepository, Request $request): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
+        $candidateParam = $request->query->get('candidate', 'all');
+        $userParam = $request->query->get('user', 'all');
+
+        $candidateId = $candidateParam === 'all' ? null : (int) $candidateParam;
+        $userId = $userParam === 'all' ? null : (int) $userParam;
+
+        $userVotes = $userVoteRepository->findFiltered($candidateId, $userId);
+
         return $this->render('user_vote/index.html.twig', [
-            'user_votes' => $userVoteRepository->findAll(),
+            'user_votes' => $userVotes,
+            'candidates' => $candidateRepository->findAll(),
+            'users' => $userRepository->findAll(),
+            'selectedCandidate' => $candidateId,
+            'selectedUser' => $userId,
         ]);
     }
 
@@ -51,7 +64,7 @@ final class UserVoteController extends AbstractController {
     }
 
     #[Route('/vote', name: 'app_user_vote_vote', methods: ['GET', 'POST'])]
-    public function vote(Request $request, CandidateRepository $candidateRepository, CategoryRepository $categoryRepository, EntityManagerInterface $entityManager): Response
+    public function vote(Request $request, CandidateRepository $candidateRepository, CategoryRepository $categoryRepository, UserVoteRepository $usrvoteRepository, EntityManagerInterface $entityManager): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
@@ -92,7 +105,7 @@ final class UserVoteController extends AbstractController {
             $entityManager->persist($userVote);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_user_vote_index', [], Response::HTTP_SEE_OTHER);
+           // return $this->redirectToRoute('app_user_vote_index', [], Response::HTTP_SEE_OTHER);
         }
 
         // If we reached here, no immediate vote was submitted; render the vote UI
@@ -109,23 +122,50 @@ final class UserVoteController extends AbstractController {
         $gender = $request->query->get('gender', $defaultGender);
         $categories = $categoryRepository->findAll();
         $genderOptions = array_map(fn($g) => $g->value, GenderType::cases());
+        $currentIndex = $request->query->get('currentIndex', 0);
+        $next_candidate = $candidateRepository->findByCategoryAndGender($category, $gender, $user, $currentIndex);
+
+        $existingVote = false;
+        if ($next_candidate && $user)
+        {
+            // Check if the user has already voted on this candidate
+            $userVotes = $usrvoteRepository->findFiltered($next_candidate->getId(), $user->getId());
+            if (count($userVotes) > 0)
+            {
+                $existingVote = true;
+            }
+        }
 
         return $this->render('home/index.html.twig', [
-            'candidate' => $userVote->getCandidate(),
+            'candidate' => $next_candidate,
             'categories' => $categories,
             'selectedCategory' => $category,
             'selectedGender' => $gender,
             'genderOptions' => $genderOptions,
+            'existingVote' => $existingVote,
+            'currentIndex' => $currentIndex,
         ]);
     }
 
     #[Route('/results', name: 'app_user_vote_results', methods: ['GET'])]
-    public function results(UserVoteRepository $userVoteRepository): Response
+    public function results(UserVoteRepository $userVoteRepository, CandidateRepository $candidateRepository, UserRepository $userRepository, Request $request): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
+        $candidateParam = $request->query->get('candidate', 'all');
+        $userParam = $request->query->get('user', 'all');
+
+        $candidateId = $candidateParam === 'all' ? null : (int) $candidateParam;
+        $userId = $userParam === 'all' ? null : (int) $userParam;
+
+        $userVotes = $userVoteRepository->findFiltered($candidateId, $userId);
+
         return $this->render('user_vote/results.html.twig', [
-            'user_votes' => $userVoteRepository->findAll(),
+            'user_votes' => $userVotes,
+            'candidates' => $candidateRepository->findAll(),
+            'users' => $userRepository->findAll(),
+            'selectedCandidate' => $candidateId,
+            'selectedUser' => $userId,
         ]);
     }
 
@@ -175,7 +215,7 @@ final class UserVoteController extends AbstractController {
     public function delete(Request $request, UserVote $userVote, EntityManagerInterface $entityManager): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        
+
         if ($this->isCsrfTokenValid('delete' . $userVote->getId(), $request->getPayload()->getString('_token')))
         {
             $entityManager->remove($userVote);

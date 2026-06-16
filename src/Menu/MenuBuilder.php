@@ -23,27 +23,35 @@ class MenuBuilder {
 
     public function createMainMenu(RequestStack $requestStack): ItemInterface
     {
-        $menu = $this->factory->createItem('root');
-        $menu->setChildrenAttribute('class', 'navbar-nav w-100');
-
-        $menu->addChild('Smash or Pass', ['route' => 'app_welcome'])
-            ->setAttribute('class', 'nav-item')
-            ->setLinkAttribute('class', 'nav-link');
-        $menu->addChild('Candidates', ['route' => 'app_candidate_index'])
-            ->setAttribute('class', 'nav-item')
-            ->setLinkAttribute('class', 'nav-link');
-        $menu->addChild('Users', ['route' => 'app_user_index'])
-            ->setAttribute('class', 'nav-item')
-            ->setLinkAttribute('class', 'nav-link');
-        $menu->addChild('Categories', ['route' => 'app_category_index'])
-            ->setAttribute('class', 'nav-item')
-            ->setLinkAttribute('class', 'nav-link');
-        $menu->addChild('Voting', ['route' => 'app_user_vote_summary'])
-            ->setAttribute('class', 'nav-item')
-            ->setLinkAttribute('class', 'nav-link');
-
         // Add user indicator on the right
         $user = $this->security->getUser();
+        $hasAdminAccess = ($user) ? in_array('ROLE_ADMIN', $user->getRoles()) : false;
+
+        $menu = $this->factory->createItem('root');
+        $menu->setChildrenAttribute('class', 'navbar-nav w-100');
+        //$menu->addChild('Home', ['route' => 'app_welcome'])
+        //    ->setAttribute('icon', 'menu-icon');
+
+        $menu->addChild('Home', ['route' => 'app_welcome'])
+            ->setAttribute('class', 'nav-item')
+            ->setLinkAttribute('class', 'nav-link');
+        $menu->addChild('Babes', ['route' => 'app_candidate_index'])
+            ->setAttribute('class', 'nav-item')
+            ->setLinkAttribute('class', 'nav-link');
+
+        if ($hasAdminAccess)
+        {
+            $menu->addChild('Users', ['route' => 'app_user_index'])
+                ->setAttribute('class', 'nav-item')
+                ->setLinkAttribute('class', 'nav-link');
+            $menu->addChild('Categories', ['route' => 'app_category_index'])
+                ->setAttribute('class', 'nav-item')
+                ->setLinkAttribute('class', 'nav-link');
+        }
+
+        $menu->addChild('Results', ['route' => 'app_user_vote_summary'])
+            ->setAttribute('class', 'nav-item')
+            ->setLinkAttribute('class', 'nav-link');
 
         if ($user && $user instanceof User)
         {
@@ -82,14 +90,18 @@ class MenuBuilder {
         }
         else
         {
+            // Spacer to push right-aligned items to the right
+            $menu->addChild('', ['uri' => '#'])
+                ->setAttribute('class', 'nav-item flex-grow-1');
+                
             // Show Register and Login links aligned to right
             $menu->addChild('Register', ['route' => 'app_register'])
-                ->setAttribute('class', 'nav-item ms-auto')
-                ->setLinkAttribute('class', 'nav-link');
+                ->setAttribute('class', 'nav-item align-self-end text-end')
+                ->setLinkAttribute('class', 'nav-link px-2 ');
 
             $menu->addChild('Login', ['route' => 'app_login'])
-                ->setAttribute('class', 'nav-item')
-                ->setLinkAttribute('class', 'nav-link');
+                ->setAttribute('class', 'nav-item align-self-end text-end')
+                ->setLinkAttribute('class', 'nav-link px-2 ');
         }
 
         return $menu;

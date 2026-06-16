@@ -3,32 +3,44 @@
 {% block title %}UserVote{% endblock %}
 
 {% block body %}
-    <h1>UserVote</h1>
+    <div class="bg-secondary mb-2 px-2">
+        <a class="text-white" href="{{ path('app_user_vote_index') }}">Vote Listing</a>
+        <span class="mx-1">&gt;</span>
+        <a class="text-white" href="{{ path('app_user_vote_edit', {'id': user_vote.id}) }}">Edit</a>
+        <span class="mx-1">&gt;</span>
+        <span class="text-white">Detail</span>
+    </div>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ user_vote.id }}</td>
-            </tr>
-            <tr>
-                <th>CreatedOn</th>
-                <td>{{ user_vote.CreatedOn ? user_vote.CreatedOn|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>ModifiedOn</th>
-                <td>{{ user_vote.ModifiedOn ? user_vote.ModifiedOn|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>Smash</th>
-                <td>{{ user_vote.Smash ? 'Yes' : 'No' }}</td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="row mx-1">
+        <div class="col-md-8  mx-auto">
+            <div class="card border-dark">
+                <div class="card-head">
+                    <h1>Smash or Pass Vote</h1>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <th>Id</th>
+                                <td>{{ user_vote.id }}</td>
+                            </tr>
+                            <tr>
+                                <th>CreatedOn</th>
+                                <td>{{ user_vote.CreatedOn ? user_vote.CreatedOn|date('Y-m-d H:i:s') : '' }}</td>
+                            </tr>
+                            <tr>
+                                <th>ModifiedOn</th>
+                                <td>{{ user_vote.ModifiedOn ? user_vote.ModifiedOn|date('Y-m-d H:i:s') : '' }}</td>
+                            </tr>
+                            <tr>
+                                <th>Smash</th>
+                                <td>{{ user_vote.Smash ? 'Yes' : 'No' }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <a href="{{ path('app_user_vote_index') }}">back to list</a>
-
-    <a href="{{ path('app_user_vote_edit', {'id': user_vote.id}) }}">edit</a>
-
-    {{ include('user_vote/_delete_form.html.twig') }}
 {% endblock %}

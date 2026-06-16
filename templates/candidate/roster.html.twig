@@ -1,0 +1,113 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Candidate index{% endblock %}
+
+{% block body %}
+    <div class="bg-secondary mb-2 px-2  d-flex">
+        <span>
+            <a class="text-white active" href="{{ path('app_candidate_index') }}">Listing</a>
+        </span>
+        <span class="mx-1">&gt;</span>
+        <span class="active">
+            <a class="text-white active" href="{{ path('app_candidate_cards') }}">Roster</a>
+        </span>
+        <span class="flex-grow-1 text-end last">
+            <a class="btn btn-success btn-sm" href="{{ path('app_candidate_new') }}">New Babe</a>
+        </span>
+    </div>
+
+    {# Search form for Category & Gender (defaults come from user prefs) #}
+    <div class="mx-3 mb-3 p-2" style="background-color: #d6d6d6">
+        <form method="get" action="{{ path('app_candidate_cards') }}" class="row g-2 align-items-end">
+            <div class="col-auto me-2">
+                <label for="category" class="form-label small mb-1">Category</label>
+                <select id="category" name="category" class="form-select">
+                    <option value="">Any</option>
+                    {% for cat in categories %}
+                        <option value="{{ cat.name }}" {% if cat.name == selectedCategory %}selected{% endif %}>{{ cat.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-auto me-2">
+                <label for="gender" class="form-label small mb-1">Gender</label>
+                <select id="gender" name="gender" class="form-select">
+                    <option value="">Any</option>
+                    {% for g in genderOptions %}
+                        <option value="{{ g }}" {% if g == selectedGender %}selected{% endif %}>{{ g }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary">Filter</button>
+            </div>
+        </form>
+    </div>
+
+    <h1>Babe Roster</h1>
+
+    <div class="container-fluid">
+        <div class="row row-cols-4 row-cols-md-4 row-cols-lg-6">
+            {% for candidate in candidates %}
+                {% set gq = candidate.Name|replace({' ': '+'}) ~ '+' ~ candidate.Categories|map(c=>c.Name)|join('+')|replace({' ': '+'}) %}
+                <div class="col mb-4">
+                    <div class="card m-2" style="height: 100%;">
+                        <a href="https://www.google.com/search?q={{ gq }}" target="_blank">
+                            <img src="{{ candidate.ImgUrl }}" class="card-img-top" alt="{{ candidate.Name }}">
+                        </a>
+                        <div class="card-body" style="height: 120px; flex: 0 0 auto;">
+                            <a class='fs-6' href="https://www.google.com/search?q={{ gq }}" target="_blank">
+                                <h6 class="card-title nowrap">
+                                    {{ candidate.Name }}
+                                </h6>
+                            </a>
+                            <div><b>Categories:</b> {{ candidate.Categories|map(c=>c.Name)|join(', ') }}</div>
+                            <div><b>Gender:</b> {{ candidate.Gender.value }}</div>
+                            {#
+                            <div><b>Height:</b> {{ candidate.Height }}</div>
+                            <div><b>Weight:</b> {{ candidate.Weight }}</div>
+                            <div><b>Birthdate:</b> {{ candidate.Birthdate ? candidate.Birthdate|date('Y-m-d') : 'N/A' }}</div>
+                            <div><b>Married:</b> {{ candidate.Married ? 'Yes' : 'No' }}</div>
+                            <div><b>Home Town:</b> {{ candidate.HomeTown }}</div>
+                            <div><b>Income:</b> {{ candidate.Income }}</div>
+                            <div><b>Political Affiliation:</b> {{ candidate.PoliticalAffiliation }}</div>
+                            #}
+                        </div>
+                        <div class="card-body">
+                            <div><b>Bio:</b></div>
+                            <div>{{ candidate.Bio }}</div>
+                        </div>
+                        {#
+                        <div class="card-body">
+                            <div><b>Interests:</b></div>
+                            <div>{{ candidate.Interests }}</div>
+                        </div>
+                        <div class="card-body">
+                            <div><b>Lifestyle:</b></div>
+                            <div>{{ candidate.Lifestyle }}</div>
+                        </div>
+                        <div class="card-body">
+                            <div><b>Additional Information:</b></div>
+                            <div>{{ candidate.AdditionalInformation }}</div>
+                        </div>
+                        #}
+                        <div class="card-footer d-flex justify-content-between">
+                            <a href="{{ path('app_candidate_show', {'id': candidate.id}) }}" class="btn btn-primary">{{ ux_icon('lsicon:view-outline') }}</a>
+                            <a href="{{ path('app_candidate_edit', {'id': candidate.id}) }}" class="btn btn-info">{{ ux_icon('ic:baseline-edit') }}</a>
+                            <form method="post" action="{{ path('app_candidate_img_search', {'id': candidate.id}) }}">
+                                <input type="hidden" name="_token" value="{{ csrf_token('img-search' ~ candidate.id) }}">
+                                <button class="btn btn-primary" type="submit" title="Find new Picture">{{ ux_icon('gravity-ui:binoculars') }}</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col">
+                    <p>No candidates found.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+{% endblock %}

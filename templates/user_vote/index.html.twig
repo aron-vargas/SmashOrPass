@@ -3,34 +3,61 @@
 {% block title %}Vote Listing{% endblock %}
 
 {% block body %}
-    <nav class="navbar navbar-expand-lg px-2 navbar-light">
+    <nav class="navbar navbar-expand px-2 navbar-light">
         {{ knp_menu_render('vote', {'currentClass': 'active'}) }}
     </nav>
-    
-    <h1>Vote Listing</h1>
+
+    <h1>Smash or Pass Index</h1>
+
+    <form method="get" class="row g-2 mb-3">
+        <div class="col-auto">
+            <select name="candidate" class="form-select">
+                <option value="all" {{ selectedCandidate is null ? 'selected' : '' }}>All Candidates</option>
+                {% for candidate in candidates %}
+                    <option value="{{ candidate.id }}" {{ selectedCandidate == candidate.id ? 'selected' : '' }}>{{ candidate.Name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-auto">
+            <select name="user" class="form-select">
+                <option value="all" {{ selectedUser is null ? 'selected' : '' }}>All Users</option>
+                {% for u in users %}
+                    <option value="{{ u.id }}" {{ selectedUser == u.id ? 'selected' : '' }}>
+                        {% if u.NickName is empty %}{{ u.FirstName }} {{ u.LastName }}{% else %}{{ u.NickName }}{% endif %}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-primary" type="submit">Filter</button>
+        </div>
+    </form>
 
     <table class="table">
         <thead>
             <tr>
-                <th>Id</th>
-                <th>User</th>
-                <th>Candidate</th>
-                <th>Smash</th>
+                <th>Id <a href="#">{{ ux_icon('flowbite:caret-sort-solid') }}</a></th>
+                <th>User <a href="#">{{ ux_icon('flowbite:caret-sort-solid') }}</a></th>
+                <th>Candidate <a href="#">{{ ux_icon('flowbite:caret-sort-solid') }}</a></th>
+                <th>Smash or Pass</th>
                 <th>actions</th>
             </tr>
         </thead>
         <tbody>
         {% for user_vote in user_votes %}
             <tr>
-                <td>{{ user_vote.id }}</td>
+                <td>
+                    {{ "%'04.10s"|format(user_vote.id) }}
+                </td>
                 <td>{{ user_vote.User.FirstName ~ ' ' ~user_vote.User.Lastname}}</td>
                 <td>{{ user_vote.Candidate.Name }}</td>
-                <td class="{{user_vote.Smash ? 'table-sucess' : 'table-warning'}}">
-                    {{ user_vote.Smash ? 'Yes' : 'No' }}
+                <td class="{{user_vote.Smash ? 'table-success' : 'table-warning'}}">
+                    {{ user_vote.Smash ? 'Smash' : 'Pass' }}
                 </td>
                 <td>
                     <a class='btn btn-sm btn-secondary' title='View' href="{{ path('app_user_vote_show', {'id': user_vote.id}) }}">{{ ux_icon('lsicon:view-outline') }}</a>
                     <a class='btn btn-sm btn-primary' title='Edit' href="{{ path('app_user_vote_edit', {'id': user_vote.id}) }}">{{ ux_icon('ic:baseline-edit') }}</a>
+                    {{ include('user_vote/_delete_form.html.twig') }}
                 </td>
             </tr>
         {% else %}
@@ -41,5 +68,35 @@
         </tbody>
     </table>
 
-  {#  <a href="{{ path('app_user_vote_new') }}">Create new</a> #}
+<script>
+function OrderBy(a,b,n) {
+    if (n) return a-b;
+    if (a < b) return -1;
+    if (a > b) return 1;
+    return 0;
+}
+var sort_table = function() {
+    var $th = $(this).closest('th');
+    $th.toggleClass('selected');
+    var isSelected = $th.hasClass('selected');
+    var isInput= $th.hasClass('input');
+    var column = $th.index();
+    var $table = $th.closest('table');
+    var isNum= $table.find('tbody > tr').children('td').eq(column).hasClass('num');
+    var rows = $table.find('tbody > tr').get();
+    rows.sort(function(rowA,rowB) {
+        var keyA = $(rowA).children('td').eq(column).text().toUpperCase();
+        var keyB = $(rowB).children('td').eq(column).text().toUpperCase();
+         if (isSelected) return OrderBy(keyA,keyB,isNum);
+        return OrderBy(keyB,keyA,isNum);
+    });
+
+    $.each(rows, function(index,row) {
+        $table.children('tbody').append(row);
+    });
+    return false;
+};
+
+$('th a').click(sort_table);
+</script>
 {% endblock %}

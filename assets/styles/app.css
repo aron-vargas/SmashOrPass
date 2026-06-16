@@ -1,13 +1,52 @@
-body {
-    background-color: skyblue;
-}
-
 .navbar .navbar-nav .nav-item.active .nav-link {
     color: rgba(255, 255, 255, 1);
     background-color: rgb(82, 121, 248);
 }
 
 .table.table-striped {
-  --bs-table-striped-bg: rgba(210, 210, 210, 0.6);
+    --bs-table-striped-bg: rgba(210, 210, 210, 0.6);
 
+}
+
+.lg-select {
+    min-height: 4rem;
+    overflow-y: visible;
+}
+
+.candidate-hs .img-thumbnail {
+    max-width: 200px;
+    object-fit: cover;
+}
+
+.thumbnail {
+    max-height: 30rem;
+    object-fit: cover;
+}
+
+.menu_level_1[data-bs-popper] {
+    right: 0;
+    left: auto !important;
+}
+
+.menu_level_1 {
+    right: 0;
+    left: auto;
+}
+
+.desc-short {
+    font-size: small;
+    max-width: 200px;
+    max-height: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.nowrap {
+    white-space: nowrap;
+}
+
+.bg-home1 {
+    background-image: url('https://media.canva.com/v2/files/uri:ifs%3A%2F%2FM%2F6080942f-9e56-4aa5-832c-294929acb0f9?csig=AAAAAAAAAAAAAAAAAAAAAJJiiGRbA102csF2A0-kHoc_pVjogUw27jmPVeHghEB0&exp=1771637749&signer=media-rpc&token=AAIAAU0AJDYwODA5NDJmLTllNTYtNGFhNS04MzJjLTI5NDkyOWFjYjBmOQAAAAABnH3WtQgxbsUKWy2ZutxIA91yetYe-6y2t6gEJLF42zhWMjo_xQ');
+    background-size: cover;
+    background-position: center;
 }

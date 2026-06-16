@@ -3,40 +3,50 @@
 {% block title %}User{% endblock %}
 
 {% block body %}
-    <h1>User</h1>
-
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ user.id }}</td>
-            </tr>
-            <tr>
-                <th>FirstName</th>
-                <td>{{ user.FirstName }}</td>
-            </tr>
-            <tr>
-                <th>LastName</th>
-                <td>{{ user.LastName }}</td>
-            </tr>
-            <tr>
-                <th>Email</th>
-                <td>{{ user.Email }}</td>
-            </tr>
-            <tr>
-                <th>NickName</th>
-                <td>{{ user.NickName }}</td>
-            </tr>
-            <tr>
-                <th>Gender</th>
-                <td>{{ user.Gender }}</td>
-            </tr>
-        </tbody>
-    </table>
-
-    <a href="{{ path('app_user_index') }}">back to list</a>
-
-    <a href="{{ path('app_user_edit', {'id': user.id}) }}">edit</a>
-
-    {{ include('user/_delete_form.html.twig') }}
+    <div class="bg-secondary mb-2 px-2">
+        <a class="text-white" href="{{ path('app_user_index') }}">Users</a>
+        <span class="mx-1">&gt;</span>
+        <a class="text-white"href="{{ path('app_user_edit', {'id': user.id}) }}">Edit</a>
+        <span class="mx-1">&gt;</span>
+        <span class="text-white">Detail</span>
+    </div>
+    <div class="row mx-1">
+        <div class="col-md-8  mx-auto">
+            <div class="card border-dark">
+                <div class="card-head">
+                    <h1 class="card-title">User</h1>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <th class="table-secondary text-end">Id</th>
+                                <td>{{ user.id }}</td>
+                            </tr>
+                            <tr>
+                                <th class="table-secondary text-end">FirstName</th>
+                                <td>{{ user.FirstName }}</td>
+                            </tr>
+                            <tr>
+                                <th class="table-secondary text-end">LastName</th>
+                                <td>{{ user.LastName }}</td>
+                            </tr>
+                            <tr>
+                                <th class="table-secondary text-end">Email</th>
+                                <td>{{ user.Email }}</td>
+                            </tr>
+                            <tr>
+                                <th class="table-secondary text-end">NickName</th>
+                                <td>{{ user.NickName }}</td>
+                            </tr>
+                            <tr>
+                                <th class="table-secondary text-end">Gender</th>
+                                <td>{{ user.Gender.value }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

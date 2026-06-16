@@ -12,11 +12,11 @@ class UserVote {
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'userVotes')]
+    #[ORM\ManyToOne(inversedBy: 'UserVotes')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $User = null;
 
-    #[ORM\ManyToOne(inversedBy: 'userVotes')]
+    #[ORM\ManyToOne(inversedBy: 'UserVotes')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Candidate $Candidate = null;
 

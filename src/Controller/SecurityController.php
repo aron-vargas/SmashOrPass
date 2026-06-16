@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Candidate;
 use App\Form\CandidateType;
 use App\Repository\CandidateRepository;
+use App\Repository\UserVoteRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -15,7 +16,7 @@ use App\Repository\CategoryRepository;
 
 class SecurityController extends AbstractController {
     #[Route(path: '/', name: 'app_welcome')]
-    public function index(Request $request, CandidateRepository $candidateRepository, CategoryRepository $categoryRepository): Response
+    public function index(Request $request, CandidateRepository $candidateRepository, CategoryRepository $categoryRepository, UserVoteRepository $usrvoteRepository): Response
     {
         // Check that the user is logged in
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
@@ -32,9 +33,20 @@ class SecurityController extends AbstractController {
         $category = $request->query->get('category', $defaultCategory);
         $gender = $request->query->get('gender', $defaultGender);
 
-        // Pick a candidate deterministically using a seeded selection (stable per user + filters)
-        $seed = crc32($user->getEmail() . '|' . $category . '|' . $gender);
-        $candidate = $candidateRepository->findRandomByCategoryAndGender($category, $gender, $seed);
+        // Pick a candidate deterministically using a seeded selection
+        $currentIndex = $request->query->get('currentIndex', 0);
+        $candidate = $candidateRepository->findByCategoryAndGender($category, $gender, $user, $currentIndex);
+
+        $existingVote = false;
+        if ($candidate && $user)
+        {
+            // Check if the user has already voted on this candidate
+            $userVotes = $usrvoteRepository->findFiltered($candidate->getId(), $user->getId());
+            if (count($userVotes) > 0)
+            {
+                $existingVote = true;
+            }
+        }
 
         // Options for the search form
         $categories = $categoryRepository->findAll();
@@ -42,10 +54,12 @@ class SecurityController extends AbstractController {
 
         return $this->render('home/index.html.twig', [
             'candidate' => $candidate,
+            'currentIndex' => $currentIndex,
             'categories' => $categories,
             'selectedCategory' => $category,
             'selectedGender' => $gender,
             'genderOptions' => $genderOptions,
+            'existingVote' => $existingVote,
         ]);
     }
 

@@ -15,17 +15,16 @@
 
     <div class="row mx-1">
         <div class="col-md-4 text-center">
-            {% if candidate.id %}
+            {% if candidate.imgurl %}
+                <img src="{{ candidate.imgurl }}" alt="Candidate image" class="img-fluid img-thumbnail mt-2 mx-auto" style="max-height:320px;">
+            {% endif %}
+            {% if candidate and candidate.id %}
                 <form method="post" action="{{ path('app_candidate_img_search', {'id': candidate.id}) }}">
                     <input type="hidden" name="_token" value="{{ csrf_token('img-search' ~ candidate.id) }}">
                     <button class="btn btn-sm btn-primary" type="submit">Find new Picture</button>
                 </form>
             {% endif %}
-
-            {% if candidate.imgurl %}
-                <img src="{{ candidate.imgurl }}" alt="Candidate image" class="img-fluid img-thumbnail mt-2 mx-auto" style="max-height:320px;">
-            {% endif %}
-        </div>
+    </div>
         <div class="col-md-8">
             <table class="table table-bordered">
                 <tbody>

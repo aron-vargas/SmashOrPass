@@ -65,9 +65,12 @@ class Candidate {
      * @var Collection<int, Category>
      */
     #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'Candidates')]
+    #[ORM\JoinTable(name: 'candidate_category')] // Optional: customize the join table name
+    #[ORM\JoinColumn(name: 'candidate_id', referencedColumnName: 'id')]
+    #[ORM\InverseJoinColumn(name: 'category_id', referencedColumnName: 'id')]
     private Collection $Categories;
 
-    #[ORM\Column(length: 512, nullable: true)]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $ImgUrl = null;
 
     public function __construct()

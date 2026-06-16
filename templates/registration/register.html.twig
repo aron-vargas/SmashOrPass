@@ -1,5 +1,7 @@
 {% extends 'base.html.twig' %}
 
+{% form_theme registrationForm 'forms/sop_formrow_layout.html.twig' %}
+
 {% block title %}Register{% endblock %}
 
 {% block body %}
@@ -25,7 +27,7 @@
 
                 <button type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
 
-                <!-- Register buttons -->
+                <!-- Login button -->
                 <div class="text-center">
                     <p>Already a member? <a href="{{ path('app_login') }}">Sign In</a></p>
                 </div>

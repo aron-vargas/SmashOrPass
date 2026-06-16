@@ -1,5 +1,6 @@
 body {
     background-color: skyblue;
+    background-image: url('/images/super-bowl-desktop-2026.png');
 }
 
 .navbar .navbar-nav .nav-item.active .nav-link {
@@ -10,4 +11,9 @@ body {
 .table.table-striped {
   --bs-table-striped-bg: rgba(210, 210, 210, 0.6);
 
+}
+
+.nowrap
+{
+    white-space: nowrap;
 }

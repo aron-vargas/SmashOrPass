@@ -1,6 +1,8 @@
 {# templates/form/custom_layout.html.twig #}
 {% block form_row %}
-    <div class="form-floating mb-4">
+    {# Use row_attr.class if provided; default to empty string to avoid missing key errors #}
+    {% set rowClass = form.vars.row_attr.class|default('') %}
+    <div class="{{ rowClass }} mb-4">
         {{ form_widget(form) }}
         {{ form_label(form) }}
         {{ form_errors(form) }}

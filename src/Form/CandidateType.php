@@ -80,8 +80,7 @@ class CandidateType extends AbstractType
             ])
             ->add('PoliticalAffiliation', ChoiceType::class, [
                 'choices' => [
-                    '' => '',
-                    'Undecided' => 'Undecided',
+                    'Unknown' => 'Unknown',
                     'Republican' => 'Republican',
                     'Democrat' => 'Democrat',
                     'Independant' => 'Independant',

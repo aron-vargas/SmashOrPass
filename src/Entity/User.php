@@ -47,7 +47,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface {
     /**
      * @var Collection<int, UserVote>
      */
-    #[ORM\OneToMany(targetEntity: UserVote::class, mappedBy: 'UserId', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: UserVote::class, mappedBy: 'User', orphanRemoval: true)]
     private Collection $UserVotes;
 
     #[ORM\Column(enumType: GenderType::class)]

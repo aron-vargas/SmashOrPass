@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Candidate;
 use App\Form\CandidateType;
 use App\Repository\CandidateRepository;
+use App\Repository\CategoryRepository;
 use App\Service\CandidateResearchService;
 use App\Service\ImageSearchService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -13,16 +14,51 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use App\Config\GenderType;
 
 #[Route('/candidate')]
 final class CandidateController extends AbstractController {
     #[Route(name: 'app_candidate_index', methods: ['GET'])]
-    public function index(CandidateRepository $candidateRepository): Response
+    public function index(Request $request, CandidateRepository $candidateRepository, CategoryRepository $categoryRepository, ): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
+        // Read search criteria from query parameters (GET form)
+        $category = $request->query->get('category', '');
+        $gender = $request->query->get('gender', '');
+
+        // Options for the search form
+        $categories = $categoryRepository->findAll();
+        $genderOptions = array_map(fn($g) => $g->value, GenderType::cases());
+
         return $this->render('candidate/index.html.twig', [
-            'candidates' => $candidateRepository->findAll(),
+            'candidates' => $candidateRepository->findAllByCategoryAndGender($category, $gender),
+            'selectedCategory' => $category,
+            'selectedGender' => $gender,
+            'categories' => $categories,
+            'genderOptions' => $genderOptions,
+        ]);
+    }
+
+    #[Route('/roster', name: 'app_candidate_cards', methods: ['GET'])]
+    public function roster(Request $request, CandidateRepository $candidateRepository, CategoryRepository $categoryRepository, ): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        // Read search criteria from query parameters (GET form)
+        $category = $request->query->get('category', "");
+        $gender = $request->query->get('gender', "");
+
+        // Options for the search form
+        $categories = $categoryRepository->findAll();
+        $genderOptions = array_map(fn($g) => $g->value, GenderType::cases());
+
+        return $this->render('candidate/roster.html.twig', [
+            'candidates' => $candidateRepository->findAllByCategoryAndGender($category, $gender),
+            'selectedCategory' => $category,
+            'selectedGender' => $gender,
+            'categories' => $categories,
+            'genderOptions' => $genderOptions,
         ]);
     }
 
@@ -125,7 +161,7 @@ final class CandidateController extends AbstractController {
     public function delete(Request $request, Candidate $candidate, EntityManagerInterface $entityManager): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        
+
         if ($this->isCsrfTokenValid('delete' . $candidate->getId(), $request->getPayload()->getString('_token')))
         {
             $entityManager->remove($candidate);

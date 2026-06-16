@@ -18,7 +18,7 @@ class ImageSearchService {
     public function findImageUrl(string $query): ?string
     {
         // Build a safe prompt for generating a headshot-like image
-        $prompt = sprintf('Headshot portrait of %s, medium close-up, recent, flattering', $query);
+        $prompt = sprintf('Headshot portrait of %s, person, medium close-up, recent, flattering', $query);
 
         // 1) First, try Wikimedia Commons (no API key required)
         try

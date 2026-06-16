@@ -3,16 +3,41 @@
 {% block title %}Voting Results{% endblock %}
 
 {% block body %}
-    <nav class="navbar navbar-expand-lg px-2 navbar-light">
+    <nav class="navbar navbar-expand px-2 navbar-light">
         {{ knp_menu_render('vote', {'currentClass': 'active'}) }}
     </nav>
-    
-    <h1>All Voting Results</h1>
+
+    <h1>All Smash or Pass Results</h1>
+
+    <form method="get" class="row g-2 mb-3">
+        <div class="col-auto">
+            <select name="candidate" class="form-select">
+                <option value="all" {{ selectedCandidate is null ? 'selected' : '' }}>All Candidates</option>
+                {% for candidate in candidates %}
+                    <option value="{{ candidate.id }}" {{ selectedCandidate == candidate.id ? 'selected' : '' }}>{{ candidate.Name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-auto">
+            <select name="user" class="form-select">
+                <option value="all" {{ selectedUser is null ? 'selected' : '' }}>All Users</option>
+                {% for u in users %}
+                    <option value="{{ u.id }}" {{ selectedUser == u.id ? 'selected' : '' }}>
+                        {% if u.NickName is empty %}{{ u.FirstName }} {{ u.LastName }}{% else %}{{ u.NickName }}{% endif %}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-primary" type="submit">Filter</button>
+        </div>
+    </form>
 
     <table class="table">
         <thead>
             <tr>
                 <th>Candidate</th>
+                <th>Voter</th>
                 <th>Smash or Pass</th>
             </tr>
         </thead>
@@ -30,7 +55,13 @@
                         {{ user_vote.User.NickName }}
                     {% endif %}
                 </td>
-                <td class="{{user_vote.Smash ? 'table-sucess' : 'table-warning'}}">{{ user_vote.Smash ? '<b>Smash<b>' : '<i>Pass</i>' }}</td>
+                <td class="{{ user_vote.Smash ? 'table-success' : 'table-warning' }}">
+                    {% if user_vote.Smash %}
+                        <b>Smash</b>
+                    {% else %}
+                        <i>Pass</i>
+                    {% endif %}
+                </td>
             </tr>
         {% else %}
             <tr>

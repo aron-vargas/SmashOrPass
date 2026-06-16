@@ -1,4 +1,5 @@
 import './stimulus_bootstrap.js';
+
 /*
  * Welcome to your app's main JavaScript file!
  *
@@ -8,6 +9,9 @@ import './stimulus_bootstrap.js';
 import './styles/app.css';
 
 const $ = require('jquery');
+// create global $ and jQuery variables
+global.$ = global.jQuery = $;
+
 // this "modifies" the jquery module: adding behavior to it
 // the bootstrap module doesn't export/return anything
 require('bootstrap');
